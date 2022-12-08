@@ -17,12 +17,26 @@ export class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const parseContacts = JSON.parse(localStorage.getItem('contacts'));
+    if (parseContacts) {
+      this.setState({ contacts: parseContacts });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
+    if (contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }
+
   addContact = data => {
     const contactsArray = this.state.contacts.map(contact => contact.name);
     if (contactsArray.includes(data.name)) {
       alert(`${data.name} is already in contacts`);
       return;
-    } 
+    }
     return this.setState({
       ...this.state,
       contacts: [
@@ -59,7 +73,6 @@ export class App extends Component {
         <TitleContactList>Contacts</TitleContactList>
         <Filter value={filter} onChange={setFilter} />
         <ContactList contacts={getContacts()} onDeleteContact={deleteContact} />
-        
       </Box>
     );
   }
